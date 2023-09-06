@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URI")
+}
+
+model Step {
+  id          Int       @id @default(autoincrement())
+  date        DateTime
+  name        String
+  bill        Bill      @relation(fields: [billId], references: [id])
+  billId      Int
+}
+
+model Doc {
+  id        Int       @id @default(autoincrement())
+  name      String
+  url       String
+  bill      Bill      @relation(fields: [billId], references: [id])
+  billId    Int  
+}
+
+model Bill {
+  id                Int       @id @default(autoincrement())
+  originId          String    @unique
+  registration      DateTime
+  url               String    @unique
+
+  title             String
+  shortTitle        String
+  veryShortTitle    String
+
+  shortContent      String
+  veryShortContent  String
+  content           String
+
+  initiators        String[]
+  session           String
+  rubric            String
+  steps             Step[]
+
+  main_committee    String
+  other_committees  String[]
+  docs              Doc[]
+
+  likesCount        Int         @default(0)
+  dislikesCount     Int         @default(0)
+}
